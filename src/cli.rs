@@ -4,27 +4,35 @@ use clap::{Parser, Subcommand};
 #[command(name = "graft", about = "Git worktree + Zellij session orchestrator")]
 pub struct Cli {
     #[command(subcommand)]
-    pub command: Option<Cmd>,
-
-    pub branch: Option<String>,
-
-    #[arg(short, long)]
-    pub ephemeral: bool,
-
-    #[arg(long)]
-    pub delete_branch: bool,
+    pub command: Command,
 }
 
 #[derive(Subcommand, Debug)]
-pub enum Cmd {
-    Rm {
+pub enum Command {
+    /// Open (or create) a worktree and attach a Zellij session
+    Open {
         branch: String,
+
+        #[arg(short, long)]
+        ephemeral: bool,
+
         #[arg(long)]
         delete_branch: bool,
     },
+
+    /// Remove worktree and optionally delete branch
+    Rm {
+        branch: String,
+
+        #[arg(long)]
+        delete_branch: bool,
+    },
+
+    /// List worktrees
     Ls {
         #[arg(long)]
         prune_worktrees: bool,
+
         #[arg(long)]
         prune_sessions: bool,
     },
