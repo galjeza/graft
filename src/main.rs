@@ -1,35 +1,58 @@
 mod cli;
-mod repo;
-mod session;
-
-use anyhow::{Result, bail};
+mod git;
+mod zellij;
+use anyhow::Result;
 use clap::Parser;
-use cli::{Cli, Cmd};
-use repo::Repo;
+use cli::{Cli, Command};
+use git2::{Branch, Repository};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let repo = Repo::open()?; // create repo instance
+    let repo = Repository::discover(".")?;
+    let worktrees = repo.worktrees()?;
+    let worktrees: Vec<_> = worktrees.iter().flatten().collect();
+    let sessions = zellij::get_sessions();
+    let branches = repo.branches(None).unwrap();
 
-    match (&cli.command, &cli.branch) {
-        (Some(cmd), _) => match cmd {
-            Cmd::Rm {
-                branch,
-                delete_branch,
-            } => {
-                repo.remove_branch(branch, *delete_branch)?;
-            }
-            Cmd::Ls { .. } => {
-                repo.list_worktrees()?;
-            }
-        },
-        (None, Some(branch)) => {
-            repo.open_worktree(branch, cli.ephemeral, cli.delete_branch)?;
+    match cli.command {
+        Command::Open {
+            branch,
+            ephemeral,
+            delete_branch,
+        } => {
+            todo!("Implement open command");
         }
-        (None, None) => {
-            bail!("Usage: graft <branch> | graft ls | graft rm <branch>");
+
+        Command::Rm {
+            branch,
+            delete_branch,
+        } => {
+            todo!("Implement rm command");
+        }
+
+        Command::Ls { .. } => {
+            println!("Branches:");
+            for wt in worktrees {
+                println!("{wt}");
+            }
         }
     }
 
     Ok(())
+}
+
+fn cleanup(repo: &Repo, branch: &str, delete_branch: bool) {
+    if let Err(e) = session::delete(branch) {
+        eprintln!("Failed to delete session: {e}");
+    }
+
+    if let Err(e) = repo.remove_worktree(branch) {
+        eprintln!("Failed to remove worktree: {e}");
+    }
+
+    if delete_branch {
+        if let Err(e) = repo.delete_local_branch(branch) {
+            eprintln!("Failed to delete branch: {e}");
+        }
+    }
 }
