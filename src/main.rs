@@ -7,7 +7,7 @@ use cli::{Cli, Command};
 use git::Git;
 
 fn main() -> Result<()> {
-    // let cli = Cli::parse();
+    let cli = Cli::parse();
     let git = Git::new(".");
     println!("Starting ");
 
@@ -18,7 +18,9 @@ fn main() -> Result<()> {
     // git.ensure_branch(&ticket);
     // println!("Ensured branch for ticket: {}", ticket);
     println!("Ensuring worktree for ticket: {}", ticket);
-    let created_worktree = git.ensure_worktree(&ticket);
+    // let created_worktree = git.ensure_worktree(&ticket);
+    let created_worktree = git.create_worktree(&ticket);
+
     println!("Created worktree at path: {:?}", created_worktree.path());
     println!("Ensured worktree for ticket: {}", ticket);
 
@@ -28,31 +30,29 @@ fn main() -> Result<()> {
     // dbg!(git.worktrees());
     // dbg!(zellij_sessions);
 
-    // match cli.command {
-    //     Command::Open {
-    //         ticket,
-    //         ephemeral,
-    //         delete_branch,
-    //     } => {
-    //         git.ensure_branch(&ticket);
-    //         git.ensure_worktree(&ticket);
-    //         // start zellij session for the ticket
-    //         todo!("Implement open command");
-    //     }
-    //
-    //     Command::Rm {
-    //         ticket,
-    //         delete_branch,
-    //     } => {
-    //         todo!("Implement rm command");
-    //     }
-    //
-    //     Command::Ls { .. } => {
-    //         let git_branches = git.branches();
-    //         let zellij_sessions = zellij::sessions();
-    //         todo!("Implement ls");
-    //     }
-    // }
+    match cli.command {
+        Command::Open {
+            ticket,
+            ephemeral,
+            delete_branch,
+        } => {
+            let _worktree = git.ensure_worktree(&ticket);
 
-    Ok(())
+            // start zellij session for the ticket
+            todo!("Implement open command");
+        }
+
+        Command::Rm {
+            ticket,
+            delete_branch,
+        } => {
+            todo!("Implement rm command");
+        }
+
+        Command::Ls { .. } => {
+            let git_branches = git.branches();
+            let zellij_sessions = zellij::sessions();
+            todo!("Implement ls");
+        }
+    }
 }
