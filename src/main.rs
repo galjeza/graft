@@ -12,13 +12,14 @@ fn main() -> Result<()> {
     println!("Starting ");
 
     // demo ticket for testing
-    let ticket = "TICKET-1234";
+    let ticket = "test-10";
 
     // println!("Ensuring branch and worktree for ticket: {}", ticket);
     // git.ensure_branch(&ticket);
     // println!("Ensured branch for ticket: {}", ticket);
     println!("Ensuring worktree for ticket: {}", ticket);
-    git.ensure_worktree(&ticket);
+    let created_worktree = git.ensure_worktree(&ticket);
+    println!("Created worktree at path: {:?}", created_worktree.path());
     println!("Ensured worktree for ticket: {}", ticket);
 
     // let zellij_sessions = zellij::sessions();
