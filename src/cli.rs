@@ -11,7 +11,7 @@ pub struct Cli {
 pub enum Command {
     /// Open (or create) a worktree and attach a Zellij session
     Open {
-        branch: String,
+        ticket: String,
 
         #[arg(short, long)]
         ephemeral: bool,
@@ -22,7 +22,7 @@ pub enum Command {
 
     /// Remove worktree and optionally delete branch
     Rm {
-        branch: String,
+        ticket: String,
 
         #[arg(long)]
         delete_branch: bool,

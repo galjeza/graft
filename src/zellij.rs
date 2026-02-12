@@ -1,6 +1,7 @@
-pub fn get_sessions() -> Vec<String> {
+pub fn sessions() -> Vec<String> {
     let output = std::process::Command::new("zellij")
         .arg("list-sessions")
+        .arg("--short")
         .output()
         .expect("Failed to execute zellij command");
 

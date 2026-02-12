@@ -4,55 +4,50 @@ mod zellij;
 use anyhow::Result;
 use clap::Parser;
 use cli::{Cli, Command};
-use git2::{Branch, Repository};
+use git::Git;
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
-    let repo = Repository::discover(".")?;
-    let worktrees = repo.worktrees()?;
-    let worktrees: Vec<_> = worktrees.iter().flatten().collect();
-    let sessions = zellij::get_sessions();
-    let branches = repo.branches(None).unwrap();
+    // let cli = Cli::parse();
+    let git = Git::new(".");
+    println!("Starting ");
 
-    match cli.command {
-        Command::Open {
-            branch,
-            ephemeral,
-            delete_branch,
-        } => {
-            todo!("Implement open command");
-        }
+    // demo ticket for testing
+    let ticket = "demo-123";
 
-        Command::Rm {
-            branch,
-            delete_branch,
-        } => {
-            todo!("Implement rm command");
-        }
+    git.ensure_branch(&ticket);
+    git.ensure_worktree(&ticket);
 
-        Command::Ls { .. } => {
-            println!("Branches:");
-            for wt in worktrees {
-                println!("{wt}");
-            }
-        }
-    }
+    // let zellij_sessions = zellij::sessions();
+
+    // dbg!(git.branches());
+    // dbg!(git.worktrees());
+    // dbg!(zellij_sessions);
+
+    // match cli.command {
+    //     Command::Open {
+    //         ticket,
+    //         ephemeral,
+    //         delete_branch,
+    //     } => {
+    //         git.ensure_branch(&ticket);
+    //         git.ensure_worktree(&ticket);
+    //         // start zellij session for the ticket
+    //         todo!("Implement open command");
+    //     }
+    //
+    //     Command::Rm {
+    //         ticket,
+    //         delete_branch,
+    //     } => {
+    //         todo!("Implement rm command");
+    //     }
+    //
+    //     Command::Ls { .. } => {
+    //         let git_branches = git.branches();
+    //         let zellij_sessions = zellij::sessions();
+    //         todo!("Implement ls");
+    //     }
+    // }
 
     Ok(())
-}
-
-fn cleanup(repo: &Repo, branch: &str, delete_branch: bool) {
-    if let Err(e) = session::delete(branch) {
-        eprintln!("Failed to delete session: {e}");
-    }
-
-    if let Err(e) = repo.remove_worktree(branch) {
-        eprintln!("Failed to remove worktree: {e}");
-    }
-
-    if delete_branch {
-        if let Err(e) = repo.delete_local_branch(branch) {
-            eprintln!("Failed to delete branch: {e}");
-        }
-    }
 }
