@@ -50,7 +50,9 @@ impl Git {
 
     pub fn create_worktree(&self, worktree_name: &str) {
         let worktree_path = PathBuf::from(format!("./{}", worktree_name));
-        self.repo.worktree(worktree_name, &worktree_path, None);
+        self.repo
+            .worktree(worktree_name, &worktree_path, None)
+            .unwrap();
     }
 
     pub fn ensure_worktree(&self, worktree_name: &str) {
