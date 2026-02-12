@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use git2::{BranchType, Repository};
+use git2::{BranchType, Repository, WorktreeAddOptions};
 
 pub struct Git {
     repo: Repository,
@@ -49,9 +49,12 @@ impl Git {
     }
 
     pub fn create_worktree(&self, worktree_name: &str) {
+        let mut options = WorktreeAddOptions::new();
+        options.checkout_existing(true);
+
         let worktree_path = PathBuf::from(format!("./{}", worktree_name));
         self.repo
-            .worktree(worktree_name, &worktree_path, None)
+            .worktree(worktree_name, &worktree_path, Some(&options))
             .unwrap();
     }
 
