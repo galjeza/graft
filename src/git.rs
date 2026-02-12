@@ -7,7 +7,7 @@ pub struct Git {
 }
 
 const BASE_BRANCH: &str = "main";
-const WORKTREE_DIR: &str = "./.git/worktrees";
+const WORKTREE_DIR: &str = "./.worktrees";
 
 impl Git {
     pub fn new(path: &str) -> Self {
