@@ -9,14 +9,14 @@ pub fn sessions() -> Vec<String> {
     stdout.lines().map(|line| line.trim().to_string()).collect()
 }
 
-pub fn start_session(session_name: &str, dir: &str) {
+pub fn attach_or_create(session: &str, dir: &str) {
     std::process::Command::new("zellij")
-        .arg("attach-session")
-        .arg("--session")
+        .arg("attach")
+        .arg("--create")
+        .arg(session)
         .current_dir(dir)
-        .arg(session_name)
         .status()
-        .expect("Failed to start zellij session");
+        .expect("Failed to attach or create zellij session");
 }
 
 pub fn kill_session(session_name: &str) {

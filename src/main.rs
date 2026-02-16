@@ -11,25 +11,6 @@ fn main() -> Result<()> {
     let git = Git::new(".");
     println!("Starting ");
 
-    // demo ticket for testing
-    let ticket = "test-10";
-
-    // println!("Ensuring branch and worktree for ticket: {}", ticket);
-    // git.ensure_branch(&ticket);
-    // println!("Ensured branch for ticket: {}", ticket);
-    println!("Ensuring worktree for ticket: {}", ticket);
-    // let created_worktree = git.ensure_worktree(&ticket);
-    let created_worktree = git.create_worktree(&ticket);
-
-    println!("Created worktree at path: {:?}", created_worktree.path());
-    println!("Ensured worktree for ticket: {}", ticket);
-
-    // let zellij_sessions = zellij::sessions();
-
-    // dbg!(git.branches());
-    // dbg!(git.worktrees());
-    // dbg!(zellij_sessions);
-
     match cli.command {
         Command::Open {
             ticket,
@@ -37,6 +18,7 @@ fn main() -> Result<()> {
             delete_branch,
         } => {
             let _worktree = git.ensure_worktree(&ticket);
+            let _session = zellij::attach_or_create(&ticket, _worktree.path().to_str().unwrap());
 
             // start zellij session for the ticket
             todo!("Implement open command");
@@ -50,9 +32,12 @@ fn main() -> Result<()> {
         }
 
         Command::Ls { .. } => {
-            let git_branches = git.branches();
             let zellij_sessions = zellij::sessions();
-            todo!("Implement ls");
+            println!("\nZellij Sessions:");
+            for session in zellij_sessions {
+                println!("{session}");
+            }
+            todo!("Implement ls command to list worktrees and zellij sessions");
         }
     }
 }

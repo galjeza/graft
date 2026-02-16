@@ -15,9 +15,18 @@ impl Git {
         Git { repo }
     }
 
-    pub fn worktrees(&self) -> Vec<String> {
-        let worktrees = self.repo.worktrees().unwrap();
-        worktrees.iter().map(|w| w.unwrap().to_string()).collect()
+    pub fn worktrees(&self) -> Vec<(String, PathBuf)> {
+        let mut result = Vec::new();
+
+        let names = self.repo.worktrees().unwrap();
+
+        for name in names.iter().flatten() {
+            if let Ok(wt) = self.repo.find_worktree(name) {
+                result.push((name.to_string(), wt.path().to_path_buf()));
+            }
+        }
+
+        result
     }
 
     pub fn branches(&self) -> Vec<String> {
