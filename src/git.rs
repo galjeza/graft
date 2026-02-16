@@ -29,35 +29,6 @@ impl Git {
         result
     }
 
-    pub fn branches(&self) -> Vec<String> {
-        let branches = self.repo.branches(Some(BranchType::Local)).unwrap();
-        return branches
-            .map(|b| {
-                let (branch, _branch_type) = b.unwrap();
-                branch.name().unwrap().unwrap().to_string()
-            })
-            .collect();
-    }
-
-    pub fn create_branch(&self, branch_name: &str) {
-        let base = self
-            .repo
-            .find_branch(BASE_BRANCH, BranchType::Local)
-            .unwrap();
-        let base_head = base.get().peel_to_commit().unwrap();
-        self.repo.branch(branch_name, &base_head, false).unwrap();
-    }
-
-    pub fn ensure_branch(&self, branch_name: &str) {
-        let branch_exists = self
-            .repo
-            .find_branch(branch_name, BranchType::Local)
-            .is_ok();
-        if !branch_exists {
-            self.create_branch(branch_name);
-        }
-    }
-
     pub fn create_worktree(&self, worktree_name: &str) -> Worktree {
         let mut options = WorktreeAddOptions::new();
         options.checkout_existing(true);
@@ -75,10 +46,6 @@ impl Git {
             Ok(worktree) => worktree,
             Err(_) => self.create_worktree(worktree_name),
         }
-    }
-
-    pub fn current_branch(&self) -> String {
-        todo!()
     }
 
     pub fn delete_branch() -> () {
